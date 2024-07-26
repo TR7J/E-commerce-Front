@@ -90,7 +90,7 @@ const ProductPage = () => {
           <div className="product-image">
             <img
               className="img-large"
-              src={`http://localhost:8000${product.image}`}
+              src={`https://e-commerce-back-i2e8.onrender.com${product.image}`}
               alt={product.name}
             />
           </div>

@@ -155,7 +155,7 @@ const ProductEditPage: React.FC = () => {
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
       const { data } = await axios.post(
-        "http://localhost:8000/api/upload",
+        "https://e-commerce-back-i2e8.onrender.com/api/upload",
         bodyFormData,
         {
           headers: {

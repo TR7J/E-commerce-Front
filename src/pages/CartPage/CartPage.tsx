@@ -55,7 +55,7 @@ export default function CartPage() {
               <div key={item._id} className="cart-item">
                 <div className="cart-item-image">
                   <img
-                    src={`http://localhost:8000${item.image}`}
+                    src={`https://e-commerce-back-i2e8.onrender.com${item.image}`}
                     alt={item.name}
                     className="img-fluid rounded thumbnail"
                   />
