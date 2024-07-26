@@ -21,7 +21,7 @@ const Navbar = () => {
     localStorage.removeItem("cartItems");
     localStorage.removeItem("shippingAddress");
     localStorage.removeItem("paymentMethod");
-    window.location.href = "/signin";
+    navigate("/signin");
   };
 
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
