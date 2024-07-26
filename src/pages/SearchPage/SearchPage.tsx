@@ -95,7 +95,7 @@ const SearchPage = () => {
                   <div key={product._id} className="card">
                     <Link to={"/product/" + product.slug}>
                       <img
-                        src={`https://e-commerce-back-i2e8.onrender.com${product.image}`}
+                        src={`https://e-commerce-backend-9q5u.onrender.com${product.image}`}
                         alt={product.name}
                       />
                     </Link>

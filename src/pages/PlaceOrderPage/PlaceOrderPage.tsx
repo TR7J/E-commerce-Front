@@ -97,7 +97,7 @@ export default function PlaceOrderPage() {
                   <div key={item._id} className="order-item">
                     <div className="order-item-image">
                       <img
-                        src=/* {item.image} */ {`https://e-commerce-back-i2e8.onrender.com${item.image}`}
+                        src=/* {item.image} */ {`https://e-commerce-backend-9q5u.onrender.com${item.image}`}
                         alt={item.name}
                         className="img-fluid rounded thumbnail"
                       ></img>{" "}

@@ -32,7 +32,7 @@ const ProductItem = ({ product }: { product: Product }) => {
     <div className="card">
       <Link to={"/product/" + product.slug}>
         <img
-          src=/* {product.image} */ {`https://e-commerce-back-i2e8.onrender.com${product.image}`}
+          src=/* {product.image} */ {`https://e-commerce-backend-9q5u.onrender.com${product.image}`}
           alt={product.name}
           /* className="product-image" */
         />
