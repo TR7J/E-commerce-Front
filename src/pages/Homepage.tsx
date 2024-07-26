@@ -12,7 +12,7 @@ const Homepage = () => {
   return isLoading ? (
     <Loading />
   ) : error ? (
-    <div>There was an error</div>
+    <div>Unable to display products at this time.😓</div>
   ) : (
     <div>
       <Helmet>
