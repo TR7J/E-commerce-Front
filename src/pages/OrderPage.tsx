@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useParams } from "react-router-dom";
+import { /* Link, */ useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading/Loading";
 import { format } from "date-fns";
@@ -119,7 +119,8 @@ export default function OrderPage() {
                           className="img-fluid rounded thumbnail"
                         ></img>{" "}
                       </div>
-                      <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                      {/* <Link to={`/product/${item.slug}`}>{item.name}</Link> */}
+                      <p>{item.name}</p>
                       <div>
                         <span>{item.quantity}</span>
                       </div>
