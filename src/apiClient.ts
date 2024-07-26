@@ -3,8 +3,8 @@ import axios from "axios";
 const apiClient = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
-      ? "https://e-commerce-back-i2e8.onrender.com/"
-      : "/",
+      ? "http://localhost:8000/"
+      : "https://e-commerce-back-i2e8.onrender.com/",
   headers: {
     "Content-type": "application/json",
   },
