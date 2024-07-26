@@ -29,8 +29,7 @@ export default function OrderPage() {
     refetch,
   } = useGetOrderDetailsQuery(orderId!);
 
-  const { mutateAsync: payOrder, isLoading: loadingPay } =
-    usePayOrderMutation();
+  const { mutateAsync: payOrder, status } = usePayOrderMutation();
   // Initialize the new deliver order mutation
   const { mutateAsync: deliverOrder } = useDeliverOrderMutation();
 
@@ -177,7 +176,7 @@ export default function OrderPage() {
                   >
                     Purchase Now
                   </button>
-                  {loadingPay && <Loading />}
+                  {status === "pending" && <Loading />}
                 </div>
               )}
 

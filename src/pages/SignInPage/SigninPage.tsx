@@ -24,7 +24,7 @@ export default function SigninPage() {
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
 
-  const { mutateAsync: signin, isLoading } = useSigninMutation();
+  const { mutateAsync: signin, status } = useSigninMutation();
 
   const submitHandler = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -89,13 +89,13 @@ export default function SigninPage() {
           </div>
           <div className="sign-up-button-div">
             <button
-              disabled={isLoading}
+              disabled={status === "pending"}
               type="submit"
               className="sign-up-button"
             >
               Sign In
             </button>
-            {isLoading && <Loading />}
+            {status === "pending" && <Loading />}
           </div>
           <div className="sign-up-group-sign-in">
             Don't have an account?{" "}

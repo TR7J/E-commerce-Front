@@ -9,6 +9,7 @@ import { CartItem } from "../../types/Cart";
 import { convertProductToCartItem } from "../../utils";
 import { useContext } from "react";
 import { Store } from "../../context/Store";
+import { Product } from "../../types/Product";
 
 const SearchPage = () => {
   const { search } = useLocation();
@@ -90,7 +91,7 @@ const SearchPage = () => {
               <div>No products found</div>
             ) : (
               <div className="cards-container">
-                {products.map((product) => (
+                {products.map((product: Product) => (
                   <div key={product._id} className="card">
                     <Link to={"/product/" + product.slug}>
                       <img
