@@ -21,7 +21,7 @@ const Navbar = () => {
     localStorage.removeItem("cartItems");
     localStorage.removeItem("shippingAddress");
     localStorage.removeItem("paymentMethod");
-    navigate("/signin");
+    window.location.href = "/signin";
   };
 
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
@@ -135,7 +135,7 @@ const Navbar = () => {
                 )}
                 {userInfo ? (
                   <Link
-                    to="/signout"
+                    to="/signin"
                     onClick={() => {
                       setModalIsOpen(false);
                       signoutHandler();
