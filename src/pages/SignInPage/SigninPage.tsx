@@ -95,7 +95,6 @@ export default function SigninPage() {
             >
               Sign In
             </button>
-            {status === "pending" && <Loading />}
           </div>
           <div className="sign-up-group-sign-in">
             Don't have an account?{" "}
@@ -106,6 +105,7 @@ export default function SigninPage() {
               Sign up
             </Link>
           </div>
+          {status === "pending" && <Loading />}
         </form>
       </div>
     </div>
