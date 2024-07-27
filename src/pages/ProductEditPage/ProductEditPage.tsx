@@ -110,13 +110,16 @@ const ProductEditPage: React.FC = () => {
       }));
     }
   };
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: "",
-    loadingUpdate: false,
-    loadingUpload: false,
-    errorUpload: "",
-  });
+  const [{ loading, error, loadingUpdate } /* dispatch */] = useReducer(
+    reducer,
+    {
+      loading: true,
+      error: "",
+      loadingUpdate: false,
+      loadingUpload: false,
+      errorUpload: "",
+    }
+  );
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
