@@ -1,14 +1,20 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useContext /* , useEffect, */,
+  useReducer,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Store } from "../../context/Store";
-import { getError } from "../../utils";
+/* import { getError } from "../../utils"; */
 /* import { Product } from '../types/Product'; */ // Import your Product type if you have one
-import { ApiError } from "../../types/ApiError";
+/* import { ApiError } from "../../types/ApiError"; */
 import Loading from "../../components/Loading/Loading";
 import { Helmet } from "react-helmet-async";
-import apiClient from "../../apiClient";
+/* import apiClient from "../../apiClient"; */
 import "./ProductEditPage.css";
 
 // Define the state and action types
@@ -18,6 +24,17 @@ interface State {
   loadingUpdate: boolean;
   loadingUpload: boolean;
   errorUpload: string;
+}
+
+interface FormData {
+  name: string;
+  slug: string;
+  description: string;
+  price: string;
+  category: string;
+  countInStock: string;
+  brand: string;
+  image: File | null;
 }
 
 interface Action {
@@ -66,10 +83,34 @@ const ProductEditPage: React.FC = () => {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const [
-    { loading, error, loadingUpdate, loadingUpload /* errorUpload */ },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    slug: "",
+    description: "",
+    price: "",
+    image: null,
+    category: "",
+    countInStock: "",
+    brand: "",
+  });
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, files } = e.target as HTMLInputElement; // Ensure correct casting to HTMLInputElement
+    if (name === "image") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files ? files[0] : null, // Access files property safely
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
     loadingUpdate: false,
@@ -77,105 +118,36 @@ const ProductEditPage: React.FC = () => {
     errorUpload: "",
   });
 
-  const [name, setName] = useState<string>("");
-  const [slug, setSlug] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
-  const [image, setImage] = useState<string>("");
-  /* const [images, setImages] = useState<string[]>([]); */
-  const [category, setCategory] = useState<string>("");
-  const [countInStock, setCountInStock] = useState<string>("");
-  const [brand, setBrand] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await apiClient.get(`/api/products/${productId}`);
-        setName(data.name);
-        setSlug(data.slug);
-        setPrice(data.price);
-        setImage(data.image);
-        /* setImages(data.images); */
-        setCategory(data.category);
-        setCountInStock(data.countInStock);
-        setBrand(data.brand);
-        setDescription(data.description);
-        dispatch({ type: "FETCH_SUCCESS" });
-      } catch (err) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: getError(err as ApiError),
-        });
-      }
-    };
-    fetchData();
-  }, [productId]);
-
-  const submitHandler = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      dispatch({ type: "UPDATE_REQUEST" });
-      await apiClient.put(
-        `/api/products/${productId}`,
-        {
-          _id: productId,
-          name,
-          slug,
-          price,
-          image,
-          category,
-          brand,
-          countInStock,
-          description,
-        },
-        {
-          headers: { Authorization: `Bearer ${userInfo?.token}` },
-        }
-      );
-      dispatch({ type: "UPDATE_SUCCESS" });
-      toast.success("Product updated successfully");
-      navigate("/admin/products");
-    } catch (err) {
-      toast.error(getError(err as ApiError));
-      dispatch({ type: "UPDATE_FAIL" });
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("slug", formData.slug);
+    data.append("description", formData.description);
+    data.append("price", formData.price);
+    data.append("category", formData.category);
+    data.append("countInStock", formData.countInStock);
+    data.append("brand", formData.brand);
+    if (formData.image) {
+      data.append("image", formData.image);
     }
-  };
-
-  const uploadFileHandler = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    forImages: boolean
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const bodyFormData = new FormData();
-    bodyFormData.append("file", file);
 
     try {
-      dispatch({ type: "UPLOAD_REQUEST" });
-      const { data } = await axios.post(
-        "https://e-commerce-backend-9q5u.onrender.com/api/upload",
-        bodyFormData,
+      await axios.post(
+        "https://e-commerce-backend-9q5u.onrender.com/api/products",
+        data,
         {
+          withCredentials: true, // Include cookies in requests
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${userInfo?.token}`,
           },
         }
       );
-      dispatch({ type: "UPLOAD_SUCCESS" });
-
-      if (!forImages) {
-        // setImages([...images, data.image]);
-        setImage(data.image);
-      } else {
-        /* setImages([...images, data.image]); */
-      }
-      toast.success("Image uploaded successfully. Click Update to apply it");
-    } catch (err) {
-      toast.error(getError(err as ApiError));
-      dispatch({ type: "UPLOAD_FAIL", payload: getError(err as ApiError) });
+      toast.success("Service upload successful!");
+      navigate("/admin/dashboard");
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
@@ -184,14 +156,14 @@ const ProductEditPage: React.FC = () => {
       <Helmet>
         <title>Edit Product {productId}</title>
       </Helmet>
-      <h1 className="product-edit-title">Edit Product : {name}</h1>
+      <h1 className="product-edit-title">Edit Product</h1>
 
       {loading ? (
         <Loading />
       ) : error ? (
         <div className="error">There was an error: {error}</div>
       ) : (
-        <form onSubmit={submitHandler}>
+        <form onSubmit={handleSubmit}>
           <div className="product-edit-form-group">
             <label htmlFor="name" className="product-edit-form-label">
               Name
@@ -199,8 +171,8 @@ const ProductEditPage: React.FC = () => {
             <input
               type="text"
               id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="name"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
@@ -212,8 +184,8 @@ const ProductEditPage: React.FC = () => {
             <input
               type="text"
               id="slug"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
+              name="slug"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
@@ -225,8 +197,8 @@ const ProductEditPage: React.FC = () => {
             <input
               type="text"
               id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              name="price"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
@@ -236,28 +208,14 @@ const ProductEditPage: React.FC = () => {
               Image File
             </label>
             <input
-              type="text"
+              type="file"
               id="image"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
+              name="image"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
           </div>
-          <div className="product-edit-form-group">
-            <label htmlFor="imageFile" className="product-edit-form-label">
-              Upload Image
-            </label>
-            <input
-              type="file"
-              id="imageFile"
-              name="file"
-              onChange={(e) => uploadFileHandler(e, false)}
-              className="product-edit-form-file-input"
-            />
-            {loadingUpload && <Loading />}
-          </div>
-
           <div className="product-edit-form-group">
             <label htmlFor="category" className="product-edit-form-label">
               Category
@@ -265,8 +223,8 @@ const ProductEditPage: React.FC = () => {
             <input
               type="text"
               id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              name="category"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
@@ -278,8 +236,8 @@ const ProductEditPage: React.FC = () => {
             <input
               type="text"
               id="brand"
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
+              name="brand"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
@@ -291,8 +249,8 @@ const ProductEditPage: React.FC = () => {
             <input
               type="text"
               id="countInStock"
-              value={countInStock}
-              onChange={(e) => setCountInStock(e.target.value)}
+              name="countInStock"
+              onChange={handleChange}
               className="product-edit-form-input"
               required
             />
@@ -303,8 +261,8 @@ const ProductEditPage: React.FC = () => {
             </label>
             <textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={handleChange}
+              name="description"
               className="product-edit-form-textarea"
               required
             />
